@@ -1,7 +1,7 @@
 package com.fiap.autohub.autohub_clients_api_java.domain.services;
 
 import com.fiap.autohub.autohub_clients_api_java.domain.commands.AddressUpdateCommand;
-import com.fiap.autohub.autohub_clients_api_java.domain.commands.UserCreateCommand;
+import com.fiap.autohub.autohub_clients_api_java.domain.commands.CompleteProfileCommand;
 import com.fiap.autohub.autohub_clients_api_java.domain.commands.UserUpdateCommand;
 import com.fiap.autohub.autohub_clients_api_java.domain.entities.Address;
 import com.fiap.autohub.autohub_clients_api_java.domain.entities.User;
@@ -25,25 +25,27 @@ public class UserServiceImpl implements UserServicePort {
     }
 
     @Override
-    public User createInitialUser(String userId, UserCreateCommand userCreateCommand) {
+    public User createProfile(String userId, String email, CompleteProfileCommand command) {
         Optional<User> existingUserOpt = userRepository.findById(userId);
         if (existingUserOpt.isPresent()) {
             throw new UserAlreadyExistsException(userId);
         }
 
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+        Address address = mapUpdateAddressCommand(command.address(), null);
 
         User userToSave = new User(
                 userId,
-                userCreateCommand.firstName(),
-                userCreateCommand.lastName(),
-                userCreateCommand.email(),
-                null,
-                null,
-                null,
+                command.firstName(),
+                command.lastName(),
+                email,
+                command.cpf(),
+                command.cnh(),
+                address,
                 now,
                 now
         );
+
         return userRepository.save(userToSave);
     }
 

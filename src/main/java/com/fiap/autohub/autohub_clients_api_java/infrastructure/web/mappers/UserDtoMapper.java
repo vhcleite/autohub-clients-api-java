@@ -1,12 +1,12 @@
 package com.fiap.autohub.autohub_clients_api_java.infrastructure.web.mappers; // Ajuste o pacote
 
 import com.fiap.autohub.autohub_clients_api_java.domain.commands.AddressUpdateCommand;
-import com.fiap.autohub.autohub_clients_api_java.domain.commands.UserCreateCommand;
+import com.fiap.autohub.autohub_clients_api_java.domain.commands.CompleteProfileCommand;
 import com.fiap.autohub.autohub_clients_api_java.domain.commands.UserUpdateCommand;
 import com.fiap.autohub.autohub_clients_api_java.domain.entities.Address;
 import com.fiap.autohub.autohub_clients_api_java.domain.entities.User;
 import com.fiap.autohub.autohub_clients_api_java.infrastructure.web.dtos.AddressDto;
-import com.fiap.autohub.autohub_clients_api_java.infrastructure.web.dtos.CreateUserRequestDto;
+import com.fiap.autohub.autohub_clients_api_java.infrastructure.web.dtos.CompleteProfileRequestDto;
 import com.fiap.autohub.autohub_clients_api_java.infrastructure.web.dtos.UpdateUserRequestDto;
 import com.fiap.autohub.autohub_clients_api_java.infrastructure.web.dtos.UserResponseDto;
 import org.mapstruct.Mapper;
@@ -28,6 +28,5 @@ public interface UserDtoMapper {
 
     AddressUpdateCommand toUpdateCommand(AddressDto dto);
 
-    UserCreateCommand toCreateCommand(CreateUserRequestDto dto);
-
+    CompleteProfileCommand toCreateCommand(CompleteProfileRequestDto dto);
 }

@@ -1,10 +1,10 @@
 package com.fiap.autohub.autohub_clients_api_java.infrastructure.web.controllers; // Ajuste o pacote
 
-import com.fiap.autohub.autohub_clients_api_java.domain.commands.UserCreateCommand;
+import com.fiap.autohub.autohub_clients_api_java.domain.commands.CompleteProfileCommand;
 import com.fiap.autohub.autohub_clients_api_java.domain.commands.UserUpdateCommand;
 import com.fiap.autohub.autohub_clients_api_java.domain.entities.User;
 import com.fiap.autohub.autohub_clients_api_java.domain.ports.in.UserServicePort;
-import com.fiap.autohub.autohub_clients_api_java.infrastructure.web.dtos.CreateUserRequestDto;
+import com.fiap.autohub.autohub_clients_api_java.infrastructure.web.dtos.CompleteProfileRequestDto;
 import com.fiap.autohub.autohub_clients_api_java.infrastructure.web.dtos.UpdateUserRequestDto;
 import com.fiap.autohub.autohub_clients_api_java.infrastructure.web.dtos.UserResponseDto;
 import com.fiap.autohub.autohub_clients_api_java.infrastructure.web.mappers.UserDtoMapper;
@@ -19,6 +19,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -37,22 +39,28 @@ public class UserController {
         this.mapper = mapper;
     }
 
-    @PostMapping("/basic")
-    @Operation(summary = "Cria registro inicial do usuário", description = "Cria o perfil básico do usuário no banco de dados após autenticação inicial no Cognito.")
+    @PostMapping("/me")
+    @Operation(summary = "Cria o perfil completo do usuário logado", description = "Cria o registro completo (Nome, CPF, Endereço, etc.) no banco de dados da aplicação pela primeira vez.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
-            @ApiResponse(responseCode = "400", description = "Requisição inválida (ex: dados faltando)", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Não autorizado (token JWT inválido ou ausente)", content = @Content),
-            @ApiResponse(responseCode = "409", description = "Usuário já existe (ID duplicado)", content = @Content)
+            @ApiResponse(responseCode = "201", description = "Perfil do usuário criado com sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "Requisição inválida", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Perfil do usuário já existe para este ID", content = @Content)
     })
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<UserResponseDto> createInitialUser(
-            @Valid @RequestBody CreateUserRequestDto request,
-            @Parameter(hidden = true) Principal principal
+    public ResponseEntity<UserResponseDto> createProfile(
+            @Valid @RequestBody CompleteProfileRequestDto request,
+            @Parameter(hidden = true) @AuthenticationPrincipal Jwt jwt
     ) {
-        String userId = principal.getName();
-        UserCreateCommand createCommand = mapper.toCreateCommand(request);
-        User createdUser = userService.createInitialUser(userId, createCommand);
+        String userId = jwt.getSubject();
+        String email = jwt.getClaimAsString("email");
+
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        CompleteProfileCommand createCommand = mapper.toCreateCommand(request);
+        User createdUser = userService.createProfile(userId, email, createCommand);
         UserResponseDto responseDto = mapper.toResponseDto(createdUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
