@@ -10,6 +10,6 @@ public class PingController {
     public String ping() {
         // Adiciona log para fácil verificação no CloudWatch
         System.out.println("Ping endpoint invoked!");
-        return "pong-79";
+        return "pong-80";
     }
 }
