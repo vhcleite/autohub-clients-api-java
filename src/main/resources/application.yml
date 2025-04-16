@@ -4,9 +4,9 @@ spring:
   application:
     name: autohub-clients-api-java
   profiles:
-    active: local
+    active: ${SPRING_PROFILES_ACTIVE:local}
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_aiDGOMfJJ
+          issuer-uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_8UvCaSvhB
