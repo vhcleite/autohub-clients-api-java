@@ -10,12 +10,6 @@ public class PingController {
     public String ping() {
         // Adiciona log para fácil verificação no CloudWatch
         System.out.println("Ping endpoint invoked!");
-        return "pong";
-    }
-
-    @GetMapping("/safe-ping")
-    public String safePing() {
-        System.out.println(" Safe Ping endpoint invoked!");
-        return "safe-pong";
+        return "pong-77";
     }
 }
