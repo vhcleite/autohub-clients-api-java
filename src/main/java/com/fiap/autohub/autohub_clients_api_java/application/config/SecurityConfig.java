@@ -34,7 +34,8 @@ public class SecurityConfig {
                                         "/swagger-ui/**",
                                         "/v3/api-docs",
                                         "/v3/api-docs/**",
-                                        "/ping"
+                                        "/ping",
+                                        "/users/ping"
                                 ).permitAll()
                                 .anyRequest().authenticated()
                 );
