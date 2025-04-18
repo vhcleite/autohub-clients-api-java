@@ -6,10 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class PingController {
 
-    @GetMapping("/ping")
+    @GetMapping("/users/ping")
     public String ping() {
-        // Adiciona log para fácil verificação no CloudWatch
         System.out.println("Ping endpoint invoked!");
-        return "pong-81";
+        return "pong-82";
     }
 }
